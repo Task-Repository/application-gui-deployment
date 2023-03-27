@@ -53,7 +53,7 @@ metadata:
     app: quasar-app
 spec:
   rules:
-  - host: task-repo-gui.soxprox.com
+  - host: task-repo.soxprox.com
     http:
       paths:
       - path: /
