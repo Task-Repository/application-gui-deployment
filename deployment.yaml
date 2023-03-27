@@ -1,0 +1,65 @@
+# a deployment for a quasar application to kubernetes
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quasar-app
+  labels:
+    app: quasar-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quasar-app
+  template:
+    metadata:
+      labels:
+        app: quasar-app
+    spec:
+      containers:
+      - name: quasar-app
+        image: ghcr.io/task-repository/application-gui/task-repo-gui:0.0.4
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: NODE_ENV
+          value: production
+
+---
+# Path: service.yaml
+# a service for a quasar application to kubernetes
+apiVersion: v1
+kind: Service
+metadata:
+  name: quasar-app
+  labels:
+    app: quasar-app
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: quasar-app
+
+---
+# Path: ingress.yaml
+# an ingress for a quasar application to kubernetes
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: quasar-app
+  labels:
+    app: quasar-app
+spec:
+  rules:
+  - host: task-repo-gui.soxprox.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: quasar-app
+            port:
+              number: 80
